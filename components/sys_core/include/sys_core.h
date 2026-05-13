@@ -103,11 +103,13 @@ extern SemaphoreHandle_t display_semaphore;
 extern EventGroupHandle_t sys_events;
 
 // --- Ortak Fonksiyon Prototipleri ---
-/**
- * @file sys_core.h
- * @brief Merkezi sistem olay grubu, veri yapıları, tanımlamaları ve haberleşme altyapısını tanımlar.
- *
- */
 void sys_core_init(void);
+
+
+// --- NVS Fonksiyon Prototipleri ---
+esp_err_t init_nvs_system(void);        // NVS flash'ı başlatır
+esp_err_t load_settings(void);          // NVS'den g_cfg içine verileri çeker
+esp_err_t save_settings(void);          // g_cfg içindeki güncel verileri NVS'ye yazar
+void set_default_settings(void);        // İlk kurulum için varsayılan değerleri yükler
 
 #endif // SYS_CORE_H
