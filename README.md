@@ -12,11 +12,11 @@ Amacım bitkimin verilerinin bilgisini tutmak ve bu bilgilere göre bitkinin iht
 
     - [x] sys_core component'inin ve CMakeLists.txt dosyasının oluşturulması.
 
-    - [devam_ediyor] sys_core.h içerisine global struct yapılarının (sensor_data_t, actuator_cmd_t, history_data_t) ve FSM durum enumlarının tanımlanması.
+    - [x] sys_core.h içerisine global struct yapılarının (sensor_data_t, actuator_cmd_t, history_data_t) ve FSM durum enumlarının tanımlanması.
 
-    - [ ] Task'lar arası iletişimi sağlayacak FreeRTOS kuyruklarının (cmd_queue, sensor_queue vb.) ve sys_events EventGroup'unun oluşturulması (init).
+    - [x] Task'lar arası iletişimi sağlayacak FreeRTOS kuyruklarının (cmd_queue, sensor_queue vb.) ve sys_events EventGroup'unun oluşturulması (init).
 
-    - [ ] Kalıcı hafıza (NVS) başlatılması ve eğer boşsa g_cfg struct'ının varsayılan değerlerle (örn: 30sn uyku, 5sn sulama) yüklenmesi.
+    - [x] Kalıcı hafıza (NVS) başlatılması ve eğer boşsa g_cfg struct'ının varsayılan değerlerle (örn: 30sn uyku, 5sn sulama) yüklenmesi.
 
 - [ ] Sensör Katmanının kurulması. Her bir sensörün kullanımının doğrulanması.
 
