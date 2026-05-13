@@ -1,6 +1,7 @@
 #include "sys_core.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
+#include "config.h" // WiFi SSID ve şifre gibi gizli bilgileri içerir
 #include "nvs.h"
 
 static const char *TAG = "SYS_CORE";
@@ -81,8 +82,8 @@ void set_default_settings(void) {
     g_cfg.temp_threshold = 28;
     g_cfg.oled_timeout_s = 30;
     g_cfg.mqtt_keepalive = 60;
-    strcpy(g_cfg.wifi_ssid, "Eski_Modem_Ismi");
-    strcpy(g_cfg.wifi_pass, "Sifre123");
+    strncpy(g_cfg.wifi_ssid, DEFAULT_WIFI_SSID, sizeof(g_cfg.wifi_ssid));
+    strncpy(g_cfg.wifi_pass, DEFAULT_WIFI_PASS, sizeof(g_cfg.wifi_pass));
     // Not: Broker IP'sini boş bırakabilir veya default bir IP atayabilirsin.
 }
 
