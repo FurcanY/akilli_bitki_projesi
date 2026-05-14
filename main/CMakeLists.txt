@@ -3,4 +3,5 @@ idf_component_register(SRCS "main.c"
                     REQUIRES sys_core
                     freertos
                     sensor_task
+                    driver
                     )
