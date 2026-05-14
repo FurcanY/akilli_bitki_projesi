@@ -21,9 +21,13 @@ void app_main(void)
             ESP_LOGI("MAIN_FSM", "--- Kuyruktan Veri Alindi ---");
             
             if (received_data.sensor_ok) {
-                ESP_LOGI("MAIN_FSM", "Sicaklik: %.1f C, Nem: %.1f %%", 
-                         received_data.temperature, received_data.humidity);
-            } else {
+                ESP_LOGI("MAIN_FSM", "Sicaklik: %.1f C, Nem: %.1f %%, Toprak Nem: %d%% (Raw: %d)", 
+                        received_data.temperature, 
+                        received_data.humidity, 
+                        received_data.soil_percent,
+                        received_data.soil_raw);
+            } 
+            else {
                 ESP_LOGW("MAIN_FSM", "Gelen veri hatali (sensor_ok = false)");
             }
             

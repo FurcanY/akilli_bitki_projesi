@@ -6,7 +6,7 @@ Amacım bitkimin verilerinin bilgisini tutmak ve bu bilgilere göre bitkinin iht
 
 ## Yapılacaklar
 
-- [devam_ediyor] Bağlantı Kurulumu ve core component oluşturulması. Temel yapının test edilmesi.
+- [x] Bağlantı Kurulumu ve core component oluşturulması. Temel yapının test edilmesi.
 
     - [x] Git reposunun başlatılması ve idf.py create-project ile ana projenin oluşturulması.
 
@@ -18,17 +18,17 @@ Amacım bitkimin verilerinin bilgisini tutmak ve bu bilgilere göre bitkinin iht
 
     - [x] Kalıcı hafıza (NVS) başlatılması ve eğer boşsa g_cfg struct'ının varsayılan değerlerle (örn: 30sn uyku, 5sn sulama) yüklenmesi.
 
-- [ ] Sensör Katmanının kurulması. Her bir sensörün kullanımının doğrulanması.
+- [x] Sensör Katmanının kurulması. Her bir sensörün kullanımının doğrulanması.
 
-    - [ ] task_sensor component'inin oluşturulması ve REQUIRES sys_core tanımının yapılması.
+    - [x] task_sensor component'inin oluşturulması ve REQUIRES sys_core tanımının yapılması.
 
-    - [ ] DHT11 kütüphanesinin eklenmesi ve GPIO 4 üzerinden sıcaklık/nem okunması.
+    - [x] DHT11 kütüphanesinin eklenmesi ve GPIO 4 üzerinden sıcaklık/nem okunması.
 
-    - [ ] Toprak nem sensörü için ADC1_CH6 (GPIO 34) yapılandırmasının yapılması ve ham değerin %0-100 aralığına map edilmesi.
+    - [x] Toprak nem sensörü için ADC1_CH6 (GPIO 34) yapılandırmasının yapılması ve ham değerin %0-100 aralığına map edilmesi.
 
-    - [ ] Korozyon önlemi algoritmasının yazılması: Sensör okumadan önce GPIO 26 HIGH, 200ms bekleme, okuma ve ardından LOW.
+    - [x] Korozyon önlemi algoritmasının yazılması: Sensör okumadan önce GPIO 26 HIGH, 200ms bekleme, okuma ve ardından LOW.
 
-    - [ ] Okunan güvenilir verilerin sensor_data_t paketine doldurulup sensor_queue'ya iletilmesi.
+    - [x] Okunan güvenilir verilerin sensor_data_t paketine doldurulup sensor_queue'ya iletilmesi.
 
 - [ ] Aktüatör Katmanının kurulması. Kolektif verilere göre sistemin cevap vermesinin sağlanması.
 
