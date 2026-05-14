@@ -8,42 +8,46 @@ static const char *TAG = "SENSOR_TEST";
 
 // --- Sensör Pin Tanımlamaları --- //
 #define GPIO_DHT11_DATA   4    // DHT11 veri pini
-#define GPIO_SENSOR_PWR   23   // Sensör grubu güç anahtarı (Q1)
+#define GPIO_SENSOR_PWR   23   // Sensör grubu güç anahtarı (Q4)
 
-// --- Test Fonksiyonu --- //
 static void sensor_task_fn(void *pvParameters) {
-    sensor_data_t data;
+    sensor_data_t data;        // Veri paketi
     esp_err_t res;
 
     while (1) {
-        // 1. Sensörlere güç ver
-        // Neden? enerji tasarrufu sağlamak için.
+        // 1. Sensör grubuna güç ver (Q4 ON)
         gpio_set_level(GPIO_SENSOR_PWR, 1);
-        
-        // 2. Sensörün stabilize olması için bekle (1500 ms)
-        vTaskDelay(pdMS_TO_TICKS(1500));
+        vTaskDelay(pdMS_TO_TICKS(1500)); // Stabilizasyon süresi 
 
-        // 3. Veriyi oku
-        // Hangi sinyal? DHT_TYPE_DHT11 tipindeki sensörden nem ve sıcaklık.
+        // 2. Veriyi oku
         res = dht_read_float_data(DHT_TYPE_DHT11, GPIO_DHT11_DATA, 
                                  &data.humidity, &data.temperature);
 
         if (res == ESP_OK) {
-            ESP_LOGI(TAG, "Sıcaklık: %.1f°C, Nem: %.1f%%", data.temperature, data.humidity);
             data.sensor_ok = true;
+            if (SENSOR_DEBUG_ENABLED) {
+                ESP_LOGI(TAG, "DHT11 Data: -> T: %.1f, H: %.1f", data.temperature, data.humidity);
+            }
         } else {
-            ESP_LOGE(TAG, "DHT11 okuma hatası! Kod: %d", res);
             data.sensor_ok = false;
+            if (SENSOR_DEBUG_ENABLED) {
+                ESP_LOGE(TAG, "DHT11 read hata: %d", res);
+            }
         }
 
-        // 4. Ölçüm bitti, gücü kes
+        // 3. Gücü kes (Q4 OFF)
         gpio_set_level(GPIO_SENSOR_PWR, 0);
 
-        // 5. Test aşamasında olduğumuz için veriyi sadece logluyoruz.
-        // İleride burada xQueueSend(sensor_queue, &data, ...) olacak.
-        
-        // Ölçümler arası 5 saniye bekle
-        vTaskDelay(pdMS_TO_TICKS(5000));
+        // 4. Veriyi kuyruğa gönder (Ana sistemle haberleşme)
+        if (sensor_queue != NULL) {
+            xQueueSend(sensor_queue, &data, 0);
+        }
+
+        // 5. Okuma bittiğine dair bayrağı kaldır
+        xEventGroupSetBits(sys_events, EVENT_SENSOR_DONE);
+
+        // Bir sonraki ölçüm için NVS'ten gelen süreyi bekle
+        vTaskDelay(pdMS_TO_TICKS(g_cfg.sleep_period_s * 1000)); // default 30 saniye
     }
 }
 
