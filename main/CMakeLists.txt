@@ -4,4 +4,5 @@ idf_component_register(SRCS "main.c"
                     freertos
                     sensor_task
                     driver
+                    actuator_task
                     )
