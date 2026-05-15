@@ -9,7 +9,6 @@
 #include "freertos/event_groups.h"
 
 // --- Debug Makroları ---
-// Ne yapıyor? Tüm sistem genelinde hata ayıklama mesajlarını açıp kapatır.
 #define DEBUG_MODE_ENABLED 1
 
 // --- FSM (Durum Makinesi) Sinyalleri ---
@@ -59,16 +58,12 @@ typedef struct {
     int64_t timestamp;      // Ölçüm zamanı (mikrosaniye)
 } sensor_data_t;
 
-// Aktüatör Komut Paketi
-#define CMD_PUMP 0x01
-#define CMD_FAN  0x02
-#define CMD_ON   0x01
-#define CMD_OFF  0x00
-
+// Aktüatör Komut Paketi (PWM Uyumlu)
+// Ne yapıyor? Pompa ve Fan için hız/güç değerlerini taşır.
+// Neden yapıyor? PWM ile hız kontrolü sağlamak için (0-1023).
 typedef struct {
-    uint8_t  type;          // Komut hedefi (CMD_PUMP | CMD_FAN)
-    uint8_t  action;        // Yapılacak işlem (CMD_ON | CMD_OFF)
-    uint16_t duration_s;    // İşlem süresi (0 ise NVS ayarı kullanılır)
+    uint16_t pump_speed;    // Pompa PWM değeri (0-1023)
+    uint16_t fan_speed;     // Fan PWM değeri (0-1023)
 } actuator_cmd_t;
 
 // NVS Konfigürasyon Paketi
@@ -87,29 +82,19 @@ typedef struct {
 } nvs_config_t;
 
 // --- Global Değişkenler (Extern) ---
-// Neden extern? Bu değişkenlerin bellekte sadece bir kez yaratılmasını 
-// ve her task'ın aynı bellek adresini (ortak yolu) kullanmasını sağlar.
-
-extern nvs_config_t g_cfg;
-
-extern QueueHandle_t sensor_queue;
-extern QueueHandle_t cmd_queue;
-extern QueueHandle_t touch_raw_queue;
-extern QueueHandle_t gesture_queue;
-
-extern SemaphoreHandle_t actuator_mutex;
+extern nvs_config_t     g_cfg;
+extern QueueHandle_t    sensor_queue;
+extern QueueHandle_t    actuator_queue;      
+extern QueueHandle_t    touch_raw_queue;
+extern QueueHandle_t    gesture_queue;
 extern SemaphoreHandle_t display_semaphore;
-
 extern EventGroupHandle_t sys_events;
 
 // --- Ortak Fonksiyon Prototipleri ---
 void sys_core_init(void);
-
-
-// --- NVS Fonksiyon Prototipleri ---
-esp_err_t init_nvs_system(void);        // NVS flash'ı başlatır
-esp_err_t load_settings(void);          // NVS'den g_cfg içine verileri çeker
-esp_err_t save_settings(void);          // g_cfg içindeki güncel verileri NVS'ye yazar
-void set_default_settings(void);        // İlk kurulum için varsayılan değerleri yükler
+esp_err_t init_nvs_system(void);
+esp_err_t load_settings(void);
+esp_err_t save_settings(void);
+void set_default_settings(void);
 
 #endif // SYS_CORE_H

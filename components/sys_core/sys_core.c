@@ -13,13 +13,10 @@ static const char *TAG = "SYS_CORE";
 nvs_config_t g_cfg;
 
 QueueHandle_t sensor_queue;
-QueueHandle_t cmd_queue;
+QueueHandle_t actuator_queue;
 QueueHandle_t touch_raw_queue;
 QueueHandle_t gesture_queue;
-
-SemaphoreHandle_t actuator_mutex;
 SemaphoreHandle_t display_semaphore;
-
 EventGroupHandle_t sys_events;
 
 // --- Başlatma Fonksiyonu ---
@@ -34,38 +31,24 @@ EventGroupHandle_t sys_events;
 void sys_core_init(void) {
     ESP_LOGI(TAG, "Sistem cekirdegi baslatiliyor...");
 
-    // 10 adet sensor_data_t taşıyabilecek kuyruk
-    sensor_queue = xQueueCreate(10, sizeof(sensor_data_t)); 
-    // 5 adet komut taşıyabilecek kuyruk
-    cmd_queue = xQueueCreate(5, sizeof(actuator_cmd_t));
-    
-    // Dokunmatik sensör için kuyruklar
-    touch_raw_queue = xQueueCreate(10, sizeof(uint32_t)); // Sadece tick sayısını taşır
-    gesture_queue = xQueueCreate(5, sizeof(uint8_t));
+    // Kuyruk Oluşturma
+    sensor_queue    = xQueueCreate(10, sizeof(sensor_data_t)); 
+    actuator_queue  = xQueueCreate(5,  sizeof(actuator_cmd_t));
+    touch_raw_queue = xQueueCreate(10, sizeof(uint32_t));
+    gesture_queue   = xQueueCreate(5,  sizeof(uint8_t));
 
-    // Mutex ve Semaphore oluşturma
-    actuator_mutex = xSemaphoreCreateMutex();
+    // Semaphore ve Event Group
     display_semaphore = xSemaphoreCreateBinary();
-    
-    // Başlangıçta ekranın güncellenebilmesi için semaforu serbest bırak
     xSemaphoreGive(display_semaphore); 
-
-    // Event Group oluşturma
     sys_events = xEventGroupCreate();
 
-    if(sensor_queue == NULL || cmd_queue == NULL || actuator_mutex == NULL) {
-        ESP_LOGE(TAG, "Kritik Hata: FreeRTOS objeleri olusturulamadi!");
-    } else {
-        ESP_LOGI(TAG, "FreeRTOS objeleri basariyla olusturuldu.");
+    if(sensor_queue == NULL || actuator_queue == NULL) {
+        ESP_LOGE(TAG, "FreeRTOS objeleri olusturulamadi!");
     }
 
-    // NVS sistemini başlat
     ESP_ERROR_CHECK(init_nvs_system());
-    ESP_ERROR_CHECK(load_settings()); // Açılışta ayarları yükle
-    
-    ESP_LOGI("SYS_CORE", "NVS ve Ayarlar hazir.");
-
-
+    ESP_ERROR_CHECK(load_settings());
+    ESP_LOGI(TAG, "NVS ve Ayarlar hazir.");
 }
 
 
